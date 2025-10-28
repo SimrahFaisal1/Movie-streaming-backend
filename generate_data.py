@@ -2,7 +2,6 @@ from pymongo import MongoClient
 from datetime import datetime, timedelta
 import random
 
-# MongoDB connection
 client = MongoClient("mongodb://localhost:27017")
 db = client["movieDB"]
 
@@ -11,7 +10,6 @@ movies_col = db["movies"]
 watch_col = db["watchHistory"]
 reviews_col = db["reviews"]
 
-# Fetch all users and movies
 users = list(users_col.find({}))
 user_ids = [u["_id"] for u in users]
 
@@ -21,7 +19,6 @@ movie_ids = [m["_id"] for m in movies]
 watch_history = []
 reviews = []
 
-# Sample review texts
 sample_texts = [
     "Amazing movie!", "Really enjoyed it.", "Could be better.",
     "Loved the storyline.", "Not my type.", "Fantastic acting!",
@@ -29,21 +26,16 @@ sample_texts = [
     "A classic!","too boring","nepo kids ruined this"
 ]
 
-# Pick some popular movies (top 5 trending)
 popular_movies = random.sample(movie_ids, k=min(5, len(movie_ids)))
 
-# Assign watch counts per movie
 movie_watch_counts = {}
 for movie_id in movie_ids:
     if movie_id in popular_movies:
-        movie_watch_counts[movie_id] = random.randint(15, 30)  # trending movies
+        movie_watch_counts[movie_id] = random.randint(15, 30)  
     else:
-        movie_watch_counts[movie_id] = random.randint(1, 7)     # normal movies
-
-# Track which user has reviewed which movie to avoid duplicates
+        movie_watch_counts[movie_id] = random.randint(1, 7)    
 reviewed_pairs = set()
 
-# Helper: generate random timestamp (last 30 days, 7PM-11PM)
 def generate_random_timestamp():
     day_offset = random.randint(0, 29)
     hour = random.randint(19, 23)
@@ -59,7 +51,6 @@ def generate_watch_duration():
     seconds = random.randint(0, 59)
     return f"{minutes} min {seconds} sec"
 
-# Generate watch history and reviews
 for movie_id, count in movie_watch_counts.items():
     for _ in range(count):
         user_id = random.choice(user_ids)
@@ -74,7 +65,6 @@ for movie_id, count in movie_watch_counts.items():
             "completed": random.choice([True, False])
         })
 
-        # 50% chance to leave a review if not already reviewed
         if (user_id, movie_id) not in reviewed_pairs and random.random() > 0.5:
             rating = round(random.uniform(1, 10), 1)  # float rating 1-10
             text_review = random.choice(sample_texts)
@@ -88,13 +78,11 @@ for movie_id, count in movie_watch_counts.items():
             })
             reviewed_pairs.add((user_id, movie_id))
 
-# Insert into MongoDB
 if watch_history:
     watch_col.insert_many(watch_history)
 if reviews:
     reviews_col.insert_many(reviews)
 
-# Fetch trending movie titles
 trending_titles = [m['title'] for m in movies if m['_id'] in popular_movies]
 
 print(f"✅ Generated {len(watch_history)} watch history records")
