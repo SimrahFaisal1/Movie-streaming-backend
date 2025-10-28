@@ -2,7 +2,6 @@ from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional
 from datetime import datetime
 
-# 🎬 Movie Schema
 class Movie(BaseModel):
     id: Optional[str] = Field(None, alias="_id")
     title: str
@@ -18,7 +17,6 @@ class Movie(BaseModel):
         populate_by_name = True
 
 
-# 👤 User Schema
 class User(BaseModel):
     id: Optional[str] = Field(None, alias="_id")
     name: str
@@ -30,7 +28,6 @@ class User(BaseModel):
         populate_by_name = True
 
 
-# 🕒 Watch History Schema
 class WatchHistory(BaseModel):
     id: Optional[str] = Field(None, alias="_id")
     user_id: str
@@ -44,7 +41,6 @@ class WatchHistory(BaseModel):
         populate_by_name = True
 
 
-# 📝 Review Schema
 class Review(BaseModel):
     id: Optional[str] = Field(None, alias="_id")
     user_id: str
