@@ -6,20 +6,12 @@ from datetime import datetime, timedelta
 from bson import ObjectId, errors
 from fastapi import HTTPException
 
-
 app = FastAPI()
 
-
-
-
-
-# ✅ Helper: Convert ObjectId to string
 def serialize_doc(doc):
     doc["_id"] = str(doc["_id"])
     return doc
 
-
-# ✅ 1. Keyword search (title, director, cast)
 @app.get("/movies/search/keyword")
 def keyword_search(keyword: str = Query(..., description="Search movies by title, director, or cast"), limit: int = 10):
     try:
@@ -104,7 +96,6 @@ def hybrid_search(query: str, limit: int = 10):
         print("ERROR in /movies/search/hybrid:", e)
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-# ✅ 4. User watch history
 @app.get("/users/{user_id}/history")
 def user_history(user_id: str):
     try:
@@ -228,7 +219,6 @@ def all_movies_watch_counts():
         print("ERROR in /movies/watch-counts:", e)
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-# ✅ Fetch all users
 @app.get("/users")
 def get_all_users():
     try:
